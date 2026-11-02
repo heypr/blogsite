@@ -1,0 +1,56 @@
+---
+import { getCollection, render } from 'astro:content';
+import type { CollectionEntry } from 'astro:content';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+
+export async function getStaticPaths() {
+  const posts = await getCollection('posts');
+  return posts.map((post) => ({
+    params: { slug: post.id },
+    props: { post },
+  }));
+}
+
+interface Props {
+  post: CollectionEntry<'posts'>;
+}
+
+const { post } = Astro.props;
+const { Content } = await render(post);
+
+const related = (await getCollection('posts'))
+  .filter((p) => p.id !== post.id)
+  .sort((a, b) => b.data.date.valueOf() - a.data.date.valueOf())
+  .slice(0, 3);
+
+function formatDate(date: Date) {
+  return date.toLocaleDateString('en-GB', {
+    day: '2-digit',
+    month: 'short',
+    year: 'numeric',
+  });
+}
+---
+<BaseLayout title={post.data.title}>
+  <div id="post">
+    <h1>{post.data.title}</h1>
+    <p class="meta">{formatDate(post.data.date)}</p>
+    <Content />
+  </div>
+
+  {
+    related.length > 0 && (
+      <div id="related">
+        <h2>Related Posts</h2>
+        <ul class="posts">
+          {related.map((p) => (
+            <li>
+              <span>{formatDate(p.data.date)}</span> &raquo;{' '}
+              <a href={`/posts/${p.id}/`}>{p.data.title}</a>
+            </li>
+          ))}
+        </ul>
+      </div>
+    )
+  }
+</BaseLayout>
