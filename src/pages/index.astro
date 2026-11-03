@@ -1,18 +1,11 @@
 ---
 import { getCollection } from 'astro:content';
 import BaseLayout from '../layouts/BaseLayout.astro';
+import { dateValue, formatDate } from '../lib/dates';
 
-const posts = (await getCollection('posts')).sort(
-  (a, b) => b.data.date.valueOf() - a.data.date.valueOf(),
+const posts = (await getCollection('posts')).sort((a, b) =>
+  dateValue(b.data.date).localeCompare(dateValue(a.data.date)),
 );
-
-function formatDate(date: Date) {
-  return date.toLocaleDateString('en-GB', {
-    day: '2-digit',
-    month: 'short',
-    year: 'numeric',
-  });
-}
 ---
 <BaseLayout title="heypr">
   <h1>Blog Posts</h1>

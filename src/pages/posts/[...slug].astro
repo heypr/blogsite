@@ -2,6 +2,7 @@
 import { getCollection, render } from 'astro:content';
 import type { CollectionEntry } from 'astro:content';
 import BaseLayout from '../../layouts/BaseLayout.astro';
+import { dateValue, formatDate } from '../../lib/dates';
 
 export async function getStaticPaths() {
   const posts = await getCollection('posts');
@@ -20,16 +21,8 @@ const { Content } = await render(post);
 
 const related = (await getCollection('posts'))
   .filter((p) => p.id !== post.id)
-  .sort((a, b) => b.data.date.valueOf() - a.data.date.valueOf())
+  .sort((a, b) => dateValue(b.data.date).localeCompare(dateValue(a.data.date)))
   .slice(0, 3);
-
-function formatDate(date: Date) {
-  return date.toLocaleDateString('en-GB', {
-    day: '2-digit',
-    month: 'short',
-    year: 'numeric',
-  });
-}
 ---
 <BaseLayout title={post.data.title}>
   <div id="post">
