@@ -1,0 +1,14 @@
+---
+interface Props {
+  path: string;
+  variant?: 'slash' | 'meta';
+}
+
+const { path, variant = 'slash' } = Astro.props;
+---
+<span
+  class:list={['view-count', variant]}
+  data-view-path={path}
+  data-view-variant={variant}
+  hidden
+></span>

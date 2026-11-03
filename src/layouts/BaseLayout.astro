@@ -50,6 +50,14 @@ const { title = 'heypr' } = Astro.props;
       </div>
       <slot />
     </div>
+
+    <script
+      is:inline
+      data-goatcounter="https://heypr.goatcounter.com/count"
+      async
+      src="https://gc.zgo.at/count.js"
+    ></script>
+
     <script>
       const root = document.documentElement;
       const toggle = document.getElementById('theme-toggle');
@@ -63,6 +71,11 @@ const { title = 'heypr' } = Astro.props;
         const next = root.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
         setTheme(next);
       });
+    </script>
+
+    <script>
+      import { hydrateViewCounts } from '../scripts/view-counts';
+      hydrateViewCounts();
     </script>
   </body>
 </html>
